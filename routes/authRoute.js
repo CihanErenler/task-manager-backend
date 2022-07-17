@@ -1,8 +1,10 @@
 const router = require("express").Router();
-const { signupValidator } = require("../validation");
+const { signupValidator, signinValidator } = require("../validation");
 const User = require("../models/user.js");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
+// SIGN UP
 router.post("/signup", async (req, res) => {
   const body = req.body;
 
@@ -51,6 +53,42 @@ router.post("/signup", async (req, res) => {
   }
 
   res.status(200).json(error);
+});
+
+router.post("/login", async (req, res) => {
+  const body = req.body;
+
+  //validate before continue
+  const { error } = signinValidator(body);
+  if (error) {
+    res.status(400).json({
+      success: false,
+      message: error.details[0].message,
+    });
+  }
+
+  // Check if the email exist
+  const user = await User.findOne({ email: body.email });
+  if (!user) {
+    return res.status(400).json({
+      success: false,
+      message: "Email does not exist",
+    });
+  }
+
+  const validatePass = await bcrypt.compare(body.password, user.password);
+  if (!validatePass) {
+    return res.status(400).json({
+      success: 0,
+      message: "Password is wrong",
+    });
+  }
+
+  const token = jwt.sign({ _id: user._id }, process.env.SECRET);
+  res.header("auth-token", token).status(200).json({
+    success: true,
+    message: "Logged in!",
+  });
 });
 
 module.exports = router;
