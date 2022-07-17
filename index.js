@@ -1,15 +1,17 @@
 const express = require("express");
 const app = express();
 require("dotenv").config();
+const port = process.env.PORT || 3000;
 const createConnection = require("./db/connection");
 
 //routers
 const authRoute = require("./routes/authRoute.js");
 
-//middlewares
-app.use("/api/v1/", authRoute);
+// Middlewares
+app.use(express.json());
 
-const port = process.env.PORT || 3000;
+// import routes
+app.use("/api/v1/", authRoute);
 
 app.get("/", (req, res) => {
   res.send("Hollo world");
