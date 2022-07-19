@@ -6,27 +6,29 @@ const createConnection = require("./db/connection");
 
 //routers
 const authRoute = require("./routes/authRoute.js");
+const projectRouter = require("./routes/projectRoute");
 
 // Middlewares
 app.use(express.json());
 
 // import routes
 app.use("/api/v1/", authRoute);
+app.use("/api/v1/project", projectRouter);
 
 app.get("/", (req, res) => {
-  res.send("Hollo world");
+	res.send("Hollo world");
 });
 
 const start = async () => {
-  try {
-    await createConnection();
-    console.log("connected to db...");
-    app.listen(port, () => {
-      console.log(`server is running on port ${port}...`);
-    });
-  } catch (error) {
-    throw new Error(error);
-  }
+	try {
+		await createConnection();
+		console.log("connected to db...");
+		app.listen(port, () => {
+			console.log(`server is running on port ${port}...`);
+		});
+	} catch (error) {
+		throw new Error(error);
+	}
 };
 
 start();
