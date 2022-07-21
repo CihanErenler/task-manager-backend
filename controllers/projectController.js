@@ -13,12 +13,17 @@ const createProject = async (req, res) => {
 	});
 
 	try {
+		let updatedUser;
 		const savedProject = await project.save();
-		await User.updateOne(
-			{ _id: req._id },
-			{ projects: [{ projectId: savedProject._id, isAdmin: true }] }
-		);
-		res.status(200).json({ data: savedProject });
+		const newProject = { projectId: savedProject._id, isAdmin: true };
+
+		const user = await User.findById(req.user._id);
+		const userProjects =
+			user.projects !== null ? [...user.projects, newProject] : [newProject];
+		await User.findByIdAndUpdate(req.user._id, {
+			projects: [userProjects],
+		});
+		res.status(200).json({ data: savedProject, updatedUser });
 	} catch (error) {
 		throw new Error(error);
 	}

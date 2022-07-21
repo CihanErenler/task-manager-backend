@@ -34,6 +34,7 @@ const signup = async (req, res) => {
 		lastname: body.lastname,
 		email: body.email,
 		password: hashedPass,
+		projects: [],
 	});
 
 	try {
@@ -83,9 +84,10 @@ const login = async (req, res) => {
 	}
 
 	const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-	res.header("auth-token", token).status(200).json({
+	res.status(200).json({
 		success: true,
 		message: "Logged in!",
+		token,
 	});
 };
 

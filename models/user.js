@@ -19,6 +19,7 @@ const user = mongoose.Schema({
 	},
 	projects: {
 		type: [{ projectId: String, isAdmin: Boolean }],
+		required: false,
 	},
 });
 

@@ -7,6 +7,7 @@ const createConnection = require("./db/connection");
 //routers
 const authRoute = require("./routes/authRoute.js");
 const projectRouter = require("./routes/projectRoute");
+const userRoute = require("./routes/userRoute");
 
 // Middlewares
 app.use(express.json());
@@ -14,6 +15,7 @@ app.use(express.json());
 // import routes
 app.use("/api/v1/", authRoute);
 app.use("/api/v1/project", projectRouter);
+app.use("/api/v1/user", userRoute);
 
 app.get("/", (req, res) => {
 	res.send("Hollo world");
