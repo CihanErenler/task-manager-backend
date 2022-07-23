@@ -3,19 +3,16 @@ const app = express();
 require("dotenv").config();
 const port = process.env.PORT || 3000;
 const createConnection = require("./db/connection");
+const notFound = require("./middlewares/notFound");
 
 //routers
 const authRoute = require("./routes/authRoute.js");
 
 // Middlewares
 app.use(express.json());
-
+app.use(notFound);
 // import routes
 app.use("/api/v1/", authRoute);
-
-app.get("/", (req, res) => {
-  res.send("Hollo world");
-});
 
 const start = async () => {
   try {
