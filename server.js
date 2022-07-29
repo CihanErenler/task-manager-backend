@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const createConnection = require("./db/connection");
 const notFound = require("./middlewares/notFound");
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3030;
 
 //routers
 const authRoute = require("./routes/authRoute.js");
@@ -12,12 +12,12 @@ const userRoute = require("./routes/userRoute");
 
 // Middlewares
 app.use(express.json());
-app.use(notFound);
 
 // import routes
 app.use("/api/v1/", authRoute);
 app.use("/api/v1/project", projectRouter);
 app.use("/api/v1/user", userRoute);
+app.use(notFound);
 
 const start = async () => {
   try {

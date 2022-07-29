@@ -1,7 +1,8 @@
-const notFound = (req, res) =>
+const notFound = (req, res) => {
   res.status(404).json({
     success: false,
-    message: "Route does not exists",
+    message: "Invalid route",
   });
+};
 
 module.exports = notFound;
