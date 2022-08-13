@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const createConnection = require("./db/connection");
 const notFound = require("./middlewares/notFound");
+const cors = require("cors");
 const port = process.env.PORT || 3030;
 
 //routers
@@ -12,9 +13,10 @@ const userRoute = require("./routes/userRoute");
 
 // Middlewares
 app.use(express.json());
+app.use(cors());
 
 // import routes
-app.use("/api/v1/", authRoute);
+app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/project", projectRouter);
 app.use("/api/v1/user", userRoute);
 app.use(notFound);

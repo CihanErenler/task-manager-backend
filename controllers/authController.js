@@ -11,7 +11,7 @@ const register = async (req, res) => {
   const { error } = signupValidator(body);
 
   if (error) {
-    res.status(400).json({
+    return res.status(400).json({
       success: false,
       message: error.details[0].message,
     });
@@ -20,7 +20,7 @@ const register = async (req, res) => {
   //check if the email alredy in use
   const userExists = await User.findOne({ email: body.email });
   if (userExists) {
-    res.status(400).json({
+    return res.status(400).json({
       success: false,
       message: "Email already in use",
     });
@@ -38,50 +38,59 @@ const register = async (req, res) => {
     projects: [],
   });
 
-  const savedUser = await user.save();
-  res.status(200).json({
-    success: true,
-    data: savedUser,
-  });
-
-  res.status(200).json(error);
+  try {
+    const savedUser = await user.save();
+    return res.status(200).json({
+      success: true,
+      data: savedUser,
+    });
+  } catch (error) {
+    res.status(200).json(error);
+  }
 };
 
 const login = async (req, res) => {
   const body = req.body;
+  console.log(body);
 
   //validate before continue
   const { error } = signinValidator(body);
   if (error) {
-    res.status(400).json({
-      success: false,
+    return res.status(400).json({
       message: error.details[0].message,
     });
   }
 
   // Check if the email exist
   const user = await User.findOne({ email: body.email });
+  console.log(user);
   if (!user) {
-    return res.status(400).json({
-      success: false,
-      message: "Email does not exist",
-    });
+    return res.status(400).json({ message: "Email does not exists" });
   }
 
   const validatePass = await bcrypt.compare(body.password, user.password);
   if (!validatePass) {
     return res.status(400).json({
-      success: 0,
       message: "Password is wrong",
     });
   }
 
-  const token = jwt.sign({ _id: user._id }, process.env.SECRET);
-  res.status(200).json({
-    success: true,
-    message: "Logged in!",
-    token,
-  });
+  try {
+    const token = jwt.sign({ _id: user._id }, process.env.SECRET);
+    return res.status(200).json({
+      user: {
+        name: user.name,
+        lastname: user.lastname,
+        email: body.email,
+        token,
+      },
+      message: "Logged in!",
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: "Somethings went wrong",
+    });
+  }
 };
 
 module.exports = { register, login };
